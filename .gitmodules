@@ -1,12 +1,12 @@
 [submodule "external/lang"]
 	path = external/lang
-	url = https://github.com/archem-team/translations
-	branch = revite-backports
+	url = https://github.com/NanoAim/translations/tree/master
+	branch = master
 [submodule "external/components"]
 	path = external/components
 	url = https://github.com/archem-team/components
 	branch = bug/deleted_account_notif
 [submodule "external/revolt.js"]
 	path = external/revolt.js
-	url = https://github.com/archem-team/revolt.js
-	branch = pin_message
+	url = https://github.com/NanoAim/revolt.js
+	branch = main
