@@ -329,21 +329,40 @@ export default observer(({ channel }: Props) => {
         if (uploadState.type !== "none") return sendFile(content);
         if (content.length === 0) return;
 
-        // Convert @username mentions to <@USER_ID> format
-        const mentionRegex = /@([a-zA-Z0-9_]+)/g;
+        // Convert @username and @everyone mentions to the proper format
+        const mentionRegex = /@([a-zA-Z0-9_]+|everyone)/g;
         const mentionMatches = content.match(mentionRegex);
 
         if (mentionMatches) {
             for (const mention of mentionMatches) {
-                const username = mention.substring(1); // Remove the @ symbol
-                // Find the user with this username
-                const user = Array.from(client.users.values()).find(
-                    (u) => u.username.toLowerCase() === username.toLowerCase()
-                );
+                const target = mention.substring(1); // Remove the @ symbol
+                
+                if (target.toLowerCase() === "everyone") {
+                    // Check if the user has permission to mention everyone
+                    const hasEveryonePermission = channel.havePermission("MentionEveryone");
+                    
+                    if (hasEveryonePermission) {
+                        // Replace @everyone with <@everyone>
+                        content = content.replace(mention, `<@everyone>`);
+                    } else {
+                        // Leave as plain text if no permission
+                        // Show a tooltip to indicate missing permission
+                        internalEmit("showToast", {
+                            id: "no-everyone-permission",
+                            content: client.i18n.t("app.main.channel.misc.no_everyone_mention"),
+                            type: "error"
+                        });
+                    }
+                } else {
+                    // Find the user with this username
+                    const user = Array.from(client.users.values()).find(
+                        (u) => u.username.toLowerCase() === target.toLowerCase()
+                    );
 
-                if (user) {
-                    // Replace @username with <@USER_ID>
-                    content = content.replace(mention, `<@${user._id}>`);
+                    if (user) {
+                        // Replace @username with <@USER_ID>
+                        content = content.replace(mention, `<@${user._id}>`);
+                    }
                 }
             }
         }
