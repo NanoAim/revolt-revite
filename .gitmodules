@@ -9,4 +9,5 @@
 [submodule "external/revolt.js"]
 	path = external/revolt.js
 	url = https://github.com/NanoAim/revolt.js
-	branch = main
+	branch = master
+
